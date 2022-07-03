@@ -1,7 +1,7 @@
 
 # Thread Pool
 
-A simple implementation of a thread pool written in C.
+A simple, and cross-platform implementation of thread pool written in C.
 
 ## Building
 

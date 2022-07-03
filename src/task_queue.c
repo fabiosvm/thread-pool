@@ -20,20 +20,20 @@ void task_queue_init(task_queue_t *queue)
   queue->count = 0;
   queue->tasks = malloc(sizeof(*queue->tasks) * queue->capacity);
   assert(queue->tasks);
-  pthread_mutex_init(&queue->mutex, NULL);
-  pthread_cond_init(&queue->cond, NULL);
+  thread_mutex_init(&queue->mutex);
+  thread_cond_init(&queue->cond);
 }
 
 void task_queue_free(task_queue_t *queue)
 {
   free(queue->tasks);
-  pthread_mutex_destroy(&queue->mutex);
-  pthread_cond_destroy(&queue->cond);
+  thread_mutex_destroy(&queue->mutex);
+  thread_cond_destroy(&queue->cond);
 }
 
 void task_queue_enqueue(task_queue_t *queue, task_t task)
 {
-  pthread_mutex_lock(&queue->mutex);
+  thread_mutex_lock(&queue->mutex);
   if (queue->count == queue->capacity)
   {
     queue->capacity <<= 1;
@@ -42,19 +42,19 @@ void task_queue_enqueue(task_queue_t *queue, task_t task)
   }
   queue->tasks[queue->count] = task;
   ++queue->count;
-  pthread_mutex_unlock(&queue->mutex);
-  pthread_cond_signal(&queue->cond);
+  thread_mutex_unlock(&queue->mutex);
+  thread_cond_signal(&queue->cond);
 }
 
 task_t task_queue_dequeue(task_queue_t *queue)
 {
-  pthread_mutex_lock(&queue->mutex);
+  thread_mutex_lock(&queue->mutex);
   while (!queue->count)
-    pthread_cond_wait(&queue->cond, &queue->mutex);
+    thread_cond_wait(&queue->cond, &queue->mutex);
   task_t task = queue->tasks[0];
   for (int i = 0; i < queue->count - 1; ++i)
     queue->tasks[i] = queue->tasks[i + 1];
   --queue->count;
-  pthread_mutex_unlock(&queue->mutex);
+  thread_mutex_unlock(&queue->mutex);
   return task;
 }

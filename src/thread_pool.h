@@ -13,7 +13,7 @@ typedef struct
 {
   task_queue_t queue;
   int size;
-  pthread_t *threads;
+  thread_t *threads;
 } thread_pool_t;
 
 void thread_pool_init(thread_pool_t *pool, int size);

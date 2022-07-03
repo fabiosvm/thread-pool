@@ -6,7 +6,7 @@
 #define TASK_QUEUE_H
 
 #include <stdbool.h>
-#include <pthread.h>
+#include "thread.h"
 
 #define TASK_QUEUE_INITIAL_CAPACITY (1 << 3)
 
@@ -21,8 +21,8 @@ typedef struct
   int capacity;
   int count;
   task_t *tasks;
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
+  thread_mutex_t mutex;
+  thread_cond_t cond;
 } task_queue_t;
 
 task_t task_new(void *ctx, void (*handler)(void *));
